@@ -3,7 +3,6 @@ const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
-
 //Connecting database
 mongoose.connect("mongodb://localhost/nodedb", {
   useNewUrlParser: true,
@@ -68,15 +67,7 @@ app.use(bodyParser.json());
 //Set Public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-//Express session midddleware
-app.use(
-  session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-  })
-);
+
 
 //Add Submit Post Route
 app.post("/articles/add", (req, res) => {
@@ -91,7 +82,9 @@ app.post("/articles/add", (req, res) => {
       console.log(err);
       return;
     } else {
+      req.flash('sucess','Article Added');
       res.redirect("/");
+
     }
   });
 });
@@ -115,7 +108,7 @@ app.post("/articles/edit/:id", (req, res) => {
   article.author = req.body.author;
   article.body = req.body.body;
  let query={_id:req.params.id}
-  Article.update(query,article,(err) => {
+  Article.updateOne(query,article,(err) => {
     if (err) {
       console.log(err);
       return;
